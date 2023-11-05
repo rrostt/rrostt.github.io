@@ -1,0 +1,33 @@
+---
+layout: post
+title: At home Tesla dashboard in Serverless
+date: 2018-09-24 21:33:13.000000000 +02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Coding
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2018/09/24/at-home-tesla-dashboard-in-serverless/"
+---
+<p>So at the weekend of my birthday I finally got the chance to sit down to work on a little project I've been wanting to do for a while. It was a gift for myself. Essentially I wanted to build a simple app to show on an iPad in the hallway of our house, where my wife could see where my car is and how long it would be for it to drive home in current traffic conditions. It would also allow me to make sure it was plugged in to charge over night, as well as let me turn on the AC in the morning if it was cold outside. (Obviously the last part could be automated but I don't always drive in so it would be a waste of electricity to do it anyway. Plus it force me to check the temperature and dress appropriately.) I completed the first version on the Sunday and I've made some minor upgrades since, but the core functionality is done.</p>
+<p>So how is it build? Well, my car is a Tesla Model S, and so it is essentially a computer on wheels. It has an accompanying app for my phone that let me control all kinds of things as well as give me its location so I can find it at a parking lot. Anything being controllable from a phone, means there is an API somewhere that can be used to do the same thing that the app can do. And Tesla is no exception. It is not official however, but fortunately it has already been documented by craftier people than myself and so far Tesla has made few attempts to prevent it being used so my hunch is that they kind of don't mind.</p>
+<p>The overall architecture of the system is essentially a React app as a frontend, talking to an API that serves the app with info about the car, an ETA for when I might be home, as well as controls for turning the AC on and off.</p>
+<p>I have recently been working with <a href="https://serverless.com">Serverless</a> and serverless architectures so I wanted to use that here. In short it means you write very small pieces of software that is invoked for a short period of time and then dies. It is run on servers somewhere, but you don't have to care about where or how they are setup, just trust that your code will run when something triggers it. (There are books written on this and this is probably the shortest explanation I can manage so YMMV).</p>
+<p>The react app is nothing special. It fetches the last state of the car every 60s and that's about it. I built it using next.js that I use to export it to an s3 bucket where it is served from as a static site. It looks something like this:</p>
+<p>[caption id="attachment_399" align="aligncenter" width="600"]<a href="https://rost.me/wordpress/wp-content/uploads/2018/09/IMG_20180923_134156.jpg"><img class="size-full wp-image-399" src="{{ site.baseurl }}/assets/2018/09/IMG_20180923_134156.jpg" alt="Tesla home dashboard" width="600" height="800" /></a> Tesla home dashboard[/caption]</p>
+<p>The backend part is where the fun begins. There are essentially three components (although there are some support components as well). The first component is a function for getting the car state from the Tesla API. There are 5 routes used, that are aggregated and populated into a state object. This object is then put on a message queue in AWS SQS. Another function for saving this state in a dynamodb database is set to be triggered on a new message on the same queue. The update function is set to trigger every 1 minute using AWS scheduled events. 1 minute it she smalled time frame for schedules events. It is enough for now but I might need to change this in the future.</p>
+<p>Once the data is in the database the last piece is a HTTP GET route for fetching the last state to display in the dashboard. Once this was done, it was simple to add two routes for turing the climate on and off. I later added a route for fetching the last locations of the previous hour, to show on the map plotting the route I've taken so far which gives additional cues for my wife as to where I might be heading.</p>
+<p>Using the serverless framework, all components are neatly described in a serverless.yml file. Each component is dead simple, and easy to test. Having the state published to the queue, rather than save directly, means I can now write another function that also listens to the queue, and emit new events for particular state changes. This could allow e.g. me to write a function that spots when I park in other places than at home or at work and send me a push notification that open up the correct parking app for the location. (Or ideally, get the parking meter companies to open up their APIs so I can have my car pay for me automatically.)</p>
+<p>In all this, I never had to touch a server configuration. I could focus on the code doing its thing.</p>
+<p>Btw, here's the <a href="https://github.com/rrostt/tesla-dashboard-serverless-functions">code on github</a>.</p>

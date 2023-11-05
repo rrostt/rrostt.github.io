@@ -1,0 +1,43 @@
+---
+layout: post
+title: LESS (CSS)
+date: 2011-09-27 23:21:33.000000000 +02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Coding
+tags:
+- css
+- javascript
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2011/09/27/less-css/"
+---
+<p>Found this handy javascript library that I think can be extremely potent: <a title="LESScss" href="http://lesscss.org/">LESS</a>. It basically gives scripting capabilities to CSS. For instance you can define a variable @color, and use that instead of using fixed values everywhere in your CSS file. This would ease when it comes to changing color schemes, for instance. But I think what will be most handy is the way it allows nested rules:</p>
+<p>[sourcecode language="css" light="true"]<br />
+#header {<br />
+	h1 {<br />
+		font-size: 26px;<br />
+		font-weight: bold;<br />
+	}<br />
+	p {<br />
+		font-size: 12px;<br />
+		a {<br />
+			text-decoration: none;<br />
+			&amp;:hover { border-width: 1px }<br />
+		}<br />
+	}<br />
+}<br />
+[/sourcecode]</p>
+<p>which basically defines the css-rule for e.g. "#header p" and "#header p a:hover". This will make cleaner css-files, and will let you write less CSS making CSS more <a title="DRY" href="http://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>. It comes with a lot more powerful stuff as well like inline javascript. Have a look for yourself and see how you can make use of it.</p>
+<p>Fairly technical post, but I wanted to put it down in text as I found it and reacted to it.</p>

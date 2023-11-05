@@ -1,0 +1,53 @@
+---
+layout: post
+title: ProtoDB as an ORM - ProtoORM?
+date: 2013-10-25 19:00:12.000000000 +02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Coding
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2013/10/25/protodb-as-an-orm-protoorm/"
+---
+<p>I believe coding should be seen as a craft, and as such there has to be as little between your creativity and executing on the creativity as possible. One such obstacle when it comes to most development of web applications, is the need to create a database structure. For years now I have been using different iterations of my own set of help functions in PHP. It started with some getters for fetching an array of rows from a MySQL query in one go, and later it evolved into what I called <a href="http://rost.me/2013/02/13/protodb-on-github/">ProtoDB</a>, which is available on <a href="https://github.com/rrostt/protodb">GitHub</a>. The core point of ProtoDB is that it creates the database structure as you code it. Setting some value for a column in a table will create that column if it does not exist, and will create the table if the table does not exists. This allows you to stay in the code editor and still work with a database. (Optimizing can always be done later.)</p>
+<p>However, sometimes it can be nice to use a simple ORM, in order to group model functions together in an object oriented way. Most ORMs however (that I have seen), still require the database structure to be in place. The tables need to exist, and have the columns needed for the ORM to map to this structure. I have therefore started to expand on ProtoDB to create a basic ORM on top of it, which gives you the flexibility of ProtoDB and the benefits of an object oriented architecture of an ORM.</p>
+<p>For now there is only one class Model that is the base of everything else.</p>
+<p>[php]<br />
+namespace ProtoORM;<br />
+use \DB;</p>
+<p>class Model {<br />
+ public static function create($row); // row is an associated array of values for columns given by the keys<br />
+ public static function find($id); // gets the model object with the given id<br />
+ public static function all(); // gives you an array of all objects in the table<br />
+ public function save(); // updates the table or inserts a new row<br />
+}<br />
+[/php]</p>
+<p>From this it is easy to create a new model, for instance a User:</p>
+<p>[php]<br />
+class User extends ProtoORM\Model {<br />
+ protected $table = &quot;users&quot;; // sets the table name<br />
+}</p>
+<p>// create a new user<br />
+$user = User::create(&quot;name&quot;=&gt;Mattias);<br />
+$user-&gt;save();</p>
+<p>// later we can set some more info<br />
+$user-&gt;age = 31;<br />
+$user-&gt;role = 'dev';<br />
+$user-&gt;save();</p>
+<p>$user = User::find($user_id);</p>
+<p>[/php]</p>
+<p>The points of this is that the table 'users' does not need to exist before running this code. Everything will be added to the database structure as need. This is obviously only the beginning, and I aim to expand on it as I keep using it in some of my current projects.</p>
+<p>I am also thinking about also implementing some kind of automation of migration files, in order for groups of people to work together in early stages of design.</p>
+<p>&nbsp;</p>

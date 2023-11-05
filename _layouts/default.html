@@ -1,0 +1,92 @@
+---
+---
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <meta property="og:title" content="Mattias Rost" />
+    <meta property="og:site_name" content="Mattias Rost" />
+    <meta property="og:description" content="Researcher and Coder" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image"
+        content="http://rost.me/wordpress/wp-content/uploads/2011/09/cropped-keyboardcoffee.jpg" />
+    <meta property="fb:admins" content="706006077" />
+
+    <title>Mattias Rost | Researcher and Coder</title>
+
+    <!-- link to style.css -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script>
+        // when document ready remove height from iframes and let them be responsive
+        document.addEventListener("DOMContentLoaded", function () {
+            var iframes = document.getElementsByTagName('iframe');
+            for (var i = 0; i < iframes.length; i++) {
+                iframes[i].removeAttribute('height');
+
+                // add style to make them responsive
+                iframes[i].style.width = '100%';
+                iframes[i].style.aspectRatio = '16/9';
+            }
+
+            // images, remove height and width, and add style to make them responsive
+            var images = document.getElementsByTagName('img');
+            for (var i = 0; i < images.length; i++) {
+                images[i].removeAttribute('height');
+                images[i].removeAttribute('width');
+
+                // add style to make them responsive
+                images[i].style.maxWidth = '100%';
+            }
+
+        });
+    </script>
+
+</head>
+
+<body>
+
+    <div class="page">
+        <header>
+            <hgroup>
+                <h1 id="site-title"><span><a href="https://rost.me/" title="Mattias Rost" rel="home">Mattias
+                            Rost</a></span>
+                </h1>
+                <h2 id="site-description">Researcher and Coder</h2>
+            </hgroup>
+
+            <a href="https://rost.me/">
+                <img src="https://rost.me/wordpress/wp-content/uploads/2011/09/cropped-keyboardcoffee.jpg" width="1000"
+                    height="288" alt="" />
+            </a>
+
+            <nav id="access" role="navigation">
+                <h3 class="assistive-text">Main menu</h3>
+                <div class="skip-link"><a class="assistive-text" href="#content" title="Skip to primary content">Skip to
+                        primary content</a></div>
+                <div class="skip-link"><a class="assistive-text" href="#secondary"
+                        title="Skip to secondary content">Skip to
+                        secondary content</a></div>
+                <div class="menu-main-container">
+                    <ul id="menu-main" class="menu">
+                        {% for page in site.pages %}
+                        <li class="menu-item menu-item-type-post_type menu-item-object-page">
+                            <a href="{{ page.url}}">{{ page.title }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </nav><!-- #access -->
+        </header>
+
+        <div class="main">
+            {{ content }}
+        </div>
+    </div>
+</body>
+
+</html>

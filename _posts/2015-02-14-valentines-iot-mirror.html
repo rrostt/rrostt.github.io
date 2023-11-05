@@ -1,0 +1,32 @@
+---
+layout: post
+title: Valentine's IoT mirror
+date: 2015-02-14 12:51:41.000000000 +01:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Coding
+- Hardware
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2015/02/14/valentines-iot-mirror/"
+---
+<p>I have for the longest time wanted to get into electronics. While I have been tinkering with connecting lights and motors to batteries since a very low age, taken several electronics courses both in highschool and at university, I've never done anything practical. Recently however I started using my now-of-age reserves of money towards DIY-electronic stuff in order to try and finally do something. In the last couple of weeks I've learned how easy it really is once you actually have the components you need, and how the DIY culture, especially around Arduino, have made these things incredibly accessible. It's safe to say that we've come a long way since the days of holding a small toy lightbulb against a 4.5V battery (which I did as a kid).</p>
+<p><iframe src="https://www.youtube.com/embed/D1O63LRcAmA" frameborder="0" width="560" height="315"></iframe></p>
+<p>Since when I get into something I tend to immerse myself quite deeply. Therefore, for this valentines day I quite readily jumped to the idea of building something with my newfound skills and toys. I therefore decided to connect a few LEDs in the shape of a heart that could flash in interesting ways to give to my girlfriend. As you can see in the video, it eventually turned into a mirror with hidden heart-shaped LEDs that can be controlled through a web interface on the local network.</p>
+<p>I had at this point built up a sensor network at home using nRF24L01+ for wireless communication (which is an incredibly cheap but easy to use RF-module), and both Arduino Pro Minis as well as ATtiny85s as brains. Therefore I already had one of the radio modules connected to an Arduino communicating serially with a small server in the house. All I had to do was to figure out how I could control and drive a bunch of LEDs (ended up using 14) from the Arduino, and then try and package it nicely to be a suitable gift.</p>
+<p>The mirror is built using an Arduino Pro Mini 5V, a nRF24L01+, driven using a 12V power adapter. Pretty sure 12V is overkill, but it's what I had lying around. The nRF24L01+ must be run on 3.3V so it's also using a voltage regulator that I put on the control board for the LEDs. The LED control is two 547 transistors and the LEDs are current limited using 470ohm. I figured that I couldn't run the current for all 14 LEDs through one transistor (they would consume about 150mA, and I didn't have any other transistors lying around) and therefore split them over two. Also ended up connecting the base of the transistors to two different pins on the Arduino, and could theoretically control the upper and lower part of the heart individually. Just ended up not doing that.</p>
+<p><a href="http://rost.me/wordpress/wp-content/uploads/2015/02/IMG_20150210_232712.jpg"><img class="alignright size-medium wp-image-321" title="Back of Heart Mirror" src="{{ site.baseurl }}/assets/2015/02/IMG_20150210_232712-225x300.jpg" alt="" width="225" height="300" /></a></p>
+<p>The mirror is continuously listening to radio traffic. When a control message arrives, it changes the mode of the LEDs. The software on the mirror is therefore incredibly simple. The server however had to be slightly modified. To this point the server was only listening to sensor nodes, and not transmitting any information back. I therefore had to change both the Arduino program to listen to serial communication and forward the data to the radio, and the software running on the server. The current server software was in Python, but decided to change to NodeJS. Since I also wanted to be able to control from a web interface, I took the time to also build a simple rest-api for sending the command to the mirror using HTTP. Thus the server software now listens to the serial for sensor readings from my sensors in the house and stores that in a database, as well as receives HTTP requests for sending out data packets to listening nodes.</p>
+<p>Finally I created a super simple web page with four buttons for selecting one of the four settings on the mirror: heart-beat, off, on, and smooth pulse.</p>
+<p>It was a fun project, girlfriend was happy, and I can now move on to the next projects. The project gave me experience in designing and soldering a PCB (using vero board), cutting such board using a drill, how simple it can be to put things together in not too shabby ways.</p>

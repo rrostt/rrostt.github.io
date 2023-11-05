@@ -1,0 +1,44 @@
+---
+layout: post
+title: Texture problems in Android OpenGL
+date: 2013-11-22 12:40:58.000000000 +01:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2013/11/22/texture-problems-in-android-opengl/"
+---
+<p>Encountered such a stupid thing that I do not wish anyone else ever to encounter so I feel I have to write a post about it. <strong>Tl;dr: BitmapFactory.decodeResource may rescale the image to match the pixel density of the device, which is not good if you are concerned about the pixel size of the image.</strong></p>
+<p>I recently had a problem with textures in OpenGL ES 2.0 on Android. Everything worked like a charm on the development device I was using, and everyone was happy. But when I found a less common device in the office, I decided to try it on that device to see the performance. I did not expect it not to work, but was prepared that might be some performance issues. Little did I expect that nothing would show on the screen. Also, no proper error messages were shown anything. Just black screen.</p>
+<p>When loading textures in OpenGL on android, people generally use something like</p>
+<p>[code]<br />
+Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.cool_texture);<br />
+GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);<br />
+[/code]</p>
+<p>Its doubtful that anything would go wrong with these two lines, so I went to check the most obvious things I could think of. First off I checked if the device required power of two sized textures (256x256, 512x512, etc). I created a texture that was 256x256 and loaded it. Did not work. So I went ahead and tried all kinds of things, stripped down the code to bare minimum to isolate where the problem was.</p>
+<p>To cut things short. The problem was with the two lines, and the way BitmapFactory.decodeResources decodes resources... The bitmap I obtained ended up not being the dimensions of the image I created, but something slightly less. The fix:</p>
+<p>[code]<br />
+final BitmapFactory.Options options = new BitmapFactory.Options();<br />
+options.inScaled = false;<br />
+Bitmap bitmap =<br />
+BitmapFactory.decodeResource(context.getResources(),R.drawable.cool_texture, options);<br />
+[/code]</p>
+<p>Once this was added, I learned the problem indeed was with power of two sized textures, and could take care of it.</p>
+<p>Ps. if you want to check the platform supports non-power of two sized textures, you can run this check:</p>
+<p>[code]<br />
+        String extensions = gl.glGetString(GL10.GL_EXTENSIONS);<br />
+        mSupportsNPOT = extensions.indexOf(&quot;GL_OES_texture_npot&quot;) != -1;<br />
+[/code]</p>
+<p>Potentially not the nicest way of doing it, but it works. Ds.</p>

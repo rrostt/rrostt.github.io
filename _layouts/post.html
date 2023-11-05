@@ -1,0 +1,13 @@
+---
+layout: default
+---
+
+<article>
+    <header>
+        <h1><a href="{{ page.url }}">{{ page.title }}</a></h1>
+        <h2 class="meta">Posted on {{ page.date | date: "%Y-%m-%d" }}</h2>
+    </header>
+    <div class="entry">
+        {{ page.content }}
+    </div>
+</article>

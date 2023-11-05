@@ -1,0 +1,65 @@
+---
+layout: post
+title: Android WebView and File Input
+date: 2013-04-18 17:15:21.000000000 +02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2013/04/18/android-webview-and-file-input/"
+---
+<p>While working on a web app that I wanted to embed in a WebView on Android to create a native app (hybrid), I encountered some problems with file input. The app is a simple one that allows users to upload photos, and shows a list of friends photos. (Instagram anyone?)</p>
+<p>These days file input on mobile devices works pretty ok on iOS and Android devices. Adding &lt;input type='file' /&gt; will create a file input, and clicking it will let the user pick a file from your phone. At least from Chrome or Safari. However, when putting this in a WebView, it is currently not handled for you automatically.</p>
+<p>Googling around to figure out what is going on reveals that this is something that has to be implemented by yourself by overriding a couple of functions in an instance of WebChromeClient. Unfortunately there are still a couple of issues with this. First of all, the functions that has to be overridden har undocumented. Second of all, returning the files seem to be devoid of file type, which is not necessarily a problem for everyone, but that was a problem for me.</p>
+<p>First of all, the functions that has to be overridden are:</p>
+<blockquote><p>mWebView.setWebChromeClient(new WebChromeClient() {</p>
+<p><span style="font-family: Georgia, 'Bitstream Charter', serif; font-style: italic;">@SuppressWarnings("unused")</span></p>
+<p>public void openFileChooser(ValueCallback&lt;Uri&gt; uploadMsg, String AcceptType, String capture) {</p>
+<p>this.openFileChooser(uploadMsg);</p>
+<p>}</p>
+<p>@SuppressWarnings("unused")</p>
+<p>public void openFileChooser(ValueCallback&lt;Uri&gt; uploadMsg, String AcceptType) {</p>
+<p>this.openFileChooser(uploadMsg);</p>
+<p>}</p>
+<p>public void openFileChooser(ValueCallback&lt;Uri&gt; uploadMsg) {</p>
+<p>mUploadMessage = uploadMsg;</p>
+<p>pickFile();</p>
+<p>}</p>
+<p>});</p></blockquote>
+<p>The three functions illustrate a progression of Android, where the last one is for early versions of android, and the last one is for Android 4.1+. Potentially then, this might change in the future.</p>
+<p>The use of this then is to return the value in mUploadMessage by calling its callback.</p>
+<p>Picking the file is easy enough using an intent call.</p>
+<blockquote><p>Intent chooserIntent = new Intent(Intent.ACTION_GET_CONTENT);</p>
+<p>chooserIntent.setType("image/*");</p>
+<p>startActivityForResult(chooserIntent, RESULTCODE);</p>
+<p>&nbsp;</p></blockquote>
+<p>And you return the file in onActivityResult:</p>
+<blockquote><p>protected void onActivityResult(int requestCode, int resultCode, Intent intent) {</p>
+<p>mUploadMessage.onReceiveValue(intent.getData());</p>
+<p>mUploadMessage = null;</p>
+<p>}</p>
+<p>&nbsp;</p></blockquote>
+<p>(<strong>Note:</strong> There's not error handling here, so remember to include that!)</p>
+<p>So far so good. This will cause the file input data set, so we can submit it from a form, or access it from javascript.</p>
+<p>What I needed this image for, was to both update a picture on the web page, and also to upload this data later on. The way I solved this was to use HTML5 local file reading through a FileReader object, and then reading the data using readAsDataURL</p>
+<blockquote><p>var reader = new FileReader();</p>
+<p>reader.readAsDataURL(file);</p>
+<p>reader.onload = function(e) {</p>
+<p>var dataurl = e.target.result;</p>
+<p>}</p></blockquote>
+<p>So we got dataurl as a URI object, which will be on the form "data:image/png;base64,...". Or so is it normally. Problem is that from at least Android 4.2.2 (On my Nexus 4), the file object that is returned to javascript from Android does not have the file type set. (file.type===undefined). This makes the data URI to be invalid as it only describes binary data: "data:base64,...". This caused major problems for me, but I managed to fix it. Fortunately the filename is set correctly, and so I can use the file ending. From that I can reform the dataurl to create a correct one</p>
+<blockquote><p>dataurl = "data:image/" + file.name.split('.').slice(-1)[0] + ";base64," + dataurl.split(',')[1];</p></blockquote>
+<p>The rest of the script then works. You can use the dataurl to set the image src ($("#theimage").attr('src',dataurl); and you can upload it as a string.</p>
+<p>I'm guessing there might be a fix for this to get Android to pass a file with the correct type set, but without that fix, this one seems to work.</p>
+<p>&nbsp;</p>

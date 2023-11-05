@@ -1,0 +1,32 @@
+---
+layout: post
+title: Template for PoC using NodeJS, React, and Express
+date: 2019-01-05 21:43:38.000000000 +01:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Coding
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2019/01/05/template-for-poc-using-nodejs-react-and-express/"
+---
+<p>Quite often I need to try a simple idea for a new service or app. My weapon of choice is currently nodejs and react. It is fairly easy to quickly hash out a server backend. Using create-react-app or NextJS, it is also quite easy to write a react frontend for said backend.</p>
+<p>This is all nice and well for a bit while you try out the idea for yourself. But no idea is really worth anything until it is shared with others. So now you need to host both the frontend and backend somehow, and point the frontend at the backend. This typically involves too many steps to make it feasible to try out the very simplest ideas.</p>
+<p>What I typically want, is a single server that can run somewhere that hosts both the backend and the frontend. Ideally just a Dockerimage. And I want this to just work without bothering with builds and such. After having done this for a few projects recently I decided to create a template so that I can reuse it whenever I need to try out the next idea.</p>
+<p>The result is in this <a href="https://github.com/rrostt/poc-template">GitHub repo</a>.</p>
+<p>To use it, copy the repo. Run npm install and then npm run dev. (I use node 10 and there is a .nvmrc in the repo.)</p>
+<p>You now have a server on port 3000 that will restart when you change the server files, and will rebuild the client when you change the frontend. You are basically set to start materialising your idea.</p>
+<p>Once you want to share it, you can either use ngrok, or build a Dockerimage using the Dockerfile in the repo and host where you typically host things. When the image starts it will build the frontend. I do it this way instead of when the dockerimage is built so that we can set environment variables on the hosting platform easier.</p>
+<p>The repo sets up webpack 4, babel 7, react, express, and jest. The server runs in development mode or production mode. In development mode the server restarts when the backend code changes, and rebuilds the frontend using webpack on client code changes. In production mode the server builds the frontend on startup. It is called production mode, but I would not recommend this for actual production ready applications. But for a PoC this works very well.</p>
+<p>Feel free to open issues or send PRs on the github repo.</p>
+<p>&nbsp;</p>

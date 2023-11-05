@@ -1,0 +1,59 @@
+---
+layout: post
+title: Low power sensors using nRF24L01+ and ATTiny
+date: 2018-11-27 11:53:44.000000000 +01:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Coding
+- Hardware
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2018/11/27/low-power-sensors-using-nrf24l01-and-attiny/"
+---
+<p>Smart home devices are expensive. A simple temperature sensor costs quite a bit. If you want one in each room it quickly gets costly. If you want door sensors on all doors and windows it's pricey.</p>
+<p>Cost is not necessarily a problem. If you know what you need you can make a budget. But if you don't know what you need then it stands in the way of experimentation. I want to be able to put up a bunch of stuff in the house and see what I can do with it. It's hard to justify that cost for other than oneself.</p>
+<p>So I've been on and off playing around with different ways to create cheap sensors. Not just to have these sensors, but because it is fun to learn.</p>
+<p>This is something of a report on my latest adventures within this.</p>
+<h1>
+Hardware</h1>
+<p>I started out with Arduino pro minis as they are easy to program and test things with. And it all starts with communication. My thought of sensor network consists of nodes that are sensors and/or actuators (think lights and motors), and gateways that can receive sensor readings and send commands to actuators. Since cost has been an issue, I've come to fall in love with nRF24L01+ - super cheap and low power radio modules.</p>
+<p>Arduinos are super convenient, but they are entire boards. You can do a bunch of stuff to get them power efficient. However my thought is that all I really need is the MCU. So instead I want my sensors to run on ATTiny84 chips. They are a little harder to flash, but you can use the same Arduino tools as for an Arduino. Libraries even come with attiny compatibility so it's hardly any difference from a software standpoint. You have less memory but these sensors only read a value and send the value to the radio module so I don't need much memory.</p>
+<h1>
+Getting radio to work</h1>
+<p>The nRF chip communicates using SPI. It requires no more than 3.6V. More and they break. It draws very little current when it is idle, like microamps. But when it wakes up to send data it quickly draws around 15mA. It means the power source must allow quick power draw without causing a massive voltage drop. A capacitor helps. (The capacitor acts as a low pass filter, smoothing out a potential voltage drop.) In my setup I power the sensors with either 5V from wall connected DC transformer, or by battery. I therefore use a 3.3V pull-down component, and a 0.1uF capacitor. I'm not sure I actually need this when powering with batteries and will test this out soon. I use two AA as batteries. I've been successful using CR2032 occasionally but it often fails. I think I need better capacitors. A CR2032 does not have a high peak power draw and can't deliver enough power when sending without too much of a voltage drop (causing the radio to stop working). A bigger on like CR2450 should work but haven't paid my hands on any yet.</p>
+<p>Powering the device is the main thing. After that comes wiring and software, but they are easy. I use the RF24 library by TMRH20 for software. It details the wiring. Make sure you get the CE and CSN correct. I've flipped those at several occasions.</p>
+<p>I've had a lot of issues with getting Ack messages through. I think it has to do with power source and can possibly be fixed with capacitors. Still need to work on this. The data gets through, but it would be nice to know if data gets received or not. Especially for actuators. Most sensors will send it's data again in a while so a drop of message is no biggie, except for door sensors that I'd like to resend every second until received by a gateway.</p>
+<p>My setup consists of an Arduino pro mini communicating with a computer over serial. Essentially byte data received by the Arduino is sent in ASCII over the serial (simplifies debugging). Received data is published on mqtt to be subscribed on. The Arduino also reads from the serial and any data received is sent out over radio. It takes address and 32 bytes of data. There is very little logic on the gateway.</p>
+<p>The idea is to be able to have several gateways around the house. Using raspberry pis would make them cheap. Using esp8266 or esp32 would make it even cheaper.</p>
+<p>The gateway computer code is written in node.js.</p>
+<p>Obviously I can connect the nRF chip directly to the gpio on an RPi, but this is simpler. I also have a bunch of computers laying around acting as gateways now.</p>
+<h1>
+Getting them to sleep</h1>
+<p>While power draw is low on the radio when idle, the MCU still draws power unless put to sleep. (Otherwise it just churns away at whatever clockspeed you've configured, looking for something to do. Delays are merely loops doing nothing but counting clockcycles.) So, we must tell it to go to sleep, getting it to use as little power as possible, and still be able to wake it up to occasionally do something useful.</p>
+<p>When sleeping the sensors are barely using any current at all. Somewhere I read people saying that similar setups use less current than the battery looses by just laying around. This would mean that e.g. a door sensor on a window that never opens will work will function for the duration of the lifetime of the battery. That is quite impressive.</p>
+<p>However, if this is the case, how will I know if the sensor is still working? To fix this I'm planning on also waking it up occasionally and send a heartbeat. That way I will be able to detect when a gateway haven't heard from a sensor in a while and act accordingly.</p>
+<h1>
+Waking up</h1>
+<p>Getting it to sleep is fairly easy. Set some bits in some registers and off to sleep it goes. Getting it to wake up is done through interrupt. An interrupt is something that allows an MCU to halt it's normal control flow to do something different for a while. It also happens to wake up a sleeping MCU.</p>
+<p>I use two types of interrupts in my sensors so far. First one is a watch dog timer. It essentially let you specify a duration in which you want to be interrupted. It can be anything from a few milliseconds, to a few seconds (8s on the attiny). The second one is Pin Change interrupt that will alert the MCU that the logical value on a pin has changed. I use these in essentially the same way: I setup the interrupt I want to use, power down the radio, and go to sleep. When it wakes up I power up the radio, and continue the program which typically involves reading the value of an external sensor and send that to the radio module.</p>
+<p>An important lesson I learned recently was to implement each ISR callback for each type of interrupt. E.g. there are two pin change interrupt handlers, PCINT0 and PCINT1, and one for WDT.</p>
+<p>In the case of temperature sensor I ask the cpu to sleep for 8 seconds. I do that 6 times, and then send the temperature. The reason is that I don't need to know the temperature every 8 seconds. Once a minute is fine. 6*8s is close enough.</p>
+<p>On the door sensor I set the interrupt to react to the door pin - the pin that is high when the door is open and low when closed. This means that the sensor is basically sleeping almost all the time.</p>
+<h1>
+Summary</h1>
+<p>So far I've got very power efficient nodes for temperature and doors. They send data to a gateway that publish it over mqtt. I've implemented sending data to nodes, but have no nodes setup for it yet. Xmas lights might be a candidate as I have a bunch of WS2812B lights lying around.</p>
+<p>I recommend anyone being interested to look at mysensors.org.</p>
+<p>For the code for all this and more details, checkout my repos:</p>
+<p><a href="https://github.com/rrostt/nrf-gateway">Nrf-gateway</a> - nodejs server gayeway<br />
+<a href="https://github.com/rrostt/nrf-nodes">Nrf-nodes</a> - Arduino code for the nodes</p>

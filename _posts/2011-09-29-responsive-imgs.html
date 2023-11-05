@@ -1,0 +1,29 @@
+---
+layout: post
+title: Responsive IMGs
+date: 2011-09-29 20:53:50.000000000 +02:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Coding
+- Design
+tags:
+- mobile
+- responsive
+- web
+meta:
+  _edit_last: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2011/09/29/responsive-imgs/"
+---
+<p>My friend Viktor at <a title="We Made You Look" href="http://www.facebook.com/wemadeyoulook">We Made You Look</a> pointed me to this article at <a title="Responsive IMGs" href="http://www.cloudfour.com/responsive-imgs/">Cloud Four on Responsive IMGs</a>. The article makes a case for what is the problem with IMG tags when doing responsive web design. What you want in a truly responsive web design when it comes to images, is to only load images of the size needed for the viewing display. Using IMG tags one can set the src attribute to the smallest possible image, and then through scripting change the src attribute to what ever is appropriate once the display size is known. For small screens this works well, however for bigger devices this slows the loading down as it has to do two requests (and loads) for each image (unless the script manages to change the src before the browser starts fetching the image). There are of course <a title="Responsive Web  Design Techniques" href="http://www.smashingmagazine.com/2011/07/22/responsive-web-design-techniques-tools-and-design-strategies/">other techniques for responsive images</a>, by for instance using CSS and media queries, but the article deals with the problems with the IMG tag specifically not other techniques. I prefer using media queries which to me makes most sense from a technology standpoint, but I agree it is far from ideal. However it is what is available now, and should therefore be used!</p>
+<p>He goes on to start a discussion about what would be appropriate to future proof the IMG tag - i.e. what is needed in order to make sure responsive web designs also work for devices, screen sizes, and resolutions, that we do not know of yet. He makes his own list of what he believe is needed and encourage readers to add to it.</p>
+<p><a title="Cloud Four" href="http://www.cloudfour.com/">Cloud Four</a> is an excellent blog on web and mobile development and design, and is definitely worth a visit!</p>

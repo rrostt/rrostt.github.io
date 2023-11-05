@@ -1,0 +1,46 @@
+---
+layout: post
+title: Static nextjs hosting on S3 on custom domain
+date: 2021-02-22 08:38:39.000000000 +01:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2021/02/22/static-nextjs-hosting-on-s3-on-custom-domain/"
+---
+<p>(Some posts I make for my future self. This is one of those.)</p>
+<p>TL;DR: To host a nextjs on S3 through a custom domain do the following</p>
+<ul>
+<li>Register domain on Route 53</li>
+<li>Request certificate through ACM</li>
+<li>Create S3 bucket</li>
+<li>Enable trailingSlash in nextjs in next.config.js</li>
+<li>Export nextjs app as static (next build &amp;&amp; next export)</li>
+<li>Upload static content to bucket</li>
+<li>Enable static website on bucket and set Index Document to index.html</li>
+<li>Configure distribution on Cloudfront to distribute the S3 static website domain (not the S3 bucket ARN)</li>
+<li>Use the domain name registered through Route 53 and choose the certificate from ACM</li>
+<li>(If the certificate dropdown is empty or do not list the certificate for your domain, it is not available yet and you have to wait up to 24h)</li>
+<li>...</li>
+<li>Profit</li>
+</ul>
+<p>I often make prototype web sites or web apps to try out an idea. My weapon of choice these days is <a href="https://nextjs.org/">nextjs</a>, which is a a quick way of getting started on building a web site in react. nextjs sets everything up to enable server side rendering and routing. Routing is done through files, so that a file in /pages/about.js is available as /about. It makes development easy.</p>
+<p>To move the app from localhost to generally available to allow for feedback, I like the simplicity of hosting it on Amazon S3. To host a nextjs app, I therefore export it to static files, using next build &amp;&amp; next export. When exporting static from nextjs, it will generate html-files that will be the entry points for the site. By default, a page like /pages/about.js will create the file about.html. Once exported, the page will load about.html, but linking to other pages (e.g. /products) will use react to update the page rather than reloading the web page.</p>
+<p>To host the web site, one can simply upload the exported files to an S3 bucket, and use the bucket-domain-url to share the app (by making the files public), or enable S3 static website. The main difference between these two ways of accessing the content of the S3 bucket through a web browser, is how it handles folders. When accessing https://bucket-doman/folder/ it will list the content of the folder (if such access is granted on the bucket). However accessing https://bucket-website-endpoint/folder/ will try and serve the file index.html in the folder. While it is possible to configure an S3 bucket to serve index.html in the root directory, it is not possible to set index.html as the default file of any folder. Only static web site enables that. This will come in handy when enabling a custom domain.</p>
+<p>Once the app is made available on an S3 static website as https://my-bucket.s3-website.eu-north-1.amazonaws.com, you might want to use a custom domain name for anything beyond an early prototype. There are two options for this: use another bucket as a domain-bucket and redirect to your website-content-bucket, or use Cloudfront. I will use Cloudfront, and register a domain using Route 53. Using Route 53 for domain names makes things easier, such as getting certificates.</p>
+<p>Register the domain using Route 53. Then setup custom domain hosting using Cloudfront, by simply creating a new distribution in the Cloudfront console on AWS. As Origin Domain Name use the S3 bucket static website domain (do *NOT* use the bucket name as suggested by the console). Under Alternate Domain Names type your custom domain as registered through Route 53. Since you do not have a certificate yet probably, click Request or import certificate with ACM (Amazon Certificate Manager). Once you've created the certificate, be prepared to wait 24h before it becomes available in Cloudfront... Didn't say this would be fast. Once the certificate is available in Cloudfront, select the certificate in the drop down list (if there is no dropdown list, there is no certificate available yet). You now all set.</p>
+<p>You will now have the nextjs static website hosted on S3 through your custom domain.</p>
+<p>Finally, you will notice that if you browse from e.g. index.html using a link in your app to e.g. /about, and try to reload the page, you will get a 404. This is because the url is /about, but there is no S3 object with this name. Instead there is a file called about.html. So how do we fix this? The most trivial way is to make sure nextjs exports about as a folder with an index.html file in it. You can that by adding a next.config.js file where you set <a href="https://nuxtjs.org/docs/2.x/configuration-glossary/configuration-router/#trailingslash">trailingSlash: true</a>. Now all of a sudden everything will work as expected on your new custom domain.</p>
+<p>If you accidentally do not choose to distribute the static website domain through Cloudfront, but instead pick the S3 bucket (an honest mistake), you can no longer host /about/index.html through the url /about/. This, it won't work. The fix is to enable static website on the S3 bucket, and to distribute the static website domain rather than the bucket through the bucket ARN in Cloudfront.</p>
+<p>&nbsp;</p>

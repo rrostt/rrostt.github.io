@@ -1,0 +1,30 @@
+---
+layout: post
+title: Ffmpeg and Chromecast
+date: 2015-03-15 03:25:58.000000000 +01:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+author:
+  login: admin
+  email: rrostt@gmail.com
+  display_name: Mattias Rost
+  first_name: Mattias
+  last_name: Rost
+permalink: "/2015/03/15/ffmpeg-and-chromecast/"
+---
+<p>I've been struggling recently with transcoding media files and streaming to Chromecast. Starting with the excellent project <a href="https://github.com/xat/castnow">castnow</a> over on github I wanted to be able to 1) stream media files directly from rar archives, and 2) create a web interface to start media files. It is not meant to be overly ambitious but just something useful to use at home.</p>
+<p>Among several problems I've encountered so far, one has been especially annoying and turned out to have a very simple fix. The transcoding is done using ffmpeg. What I've been doing is to let ffmpeg reencode any media file I give it, into an mp4 with h264 and aac. This works most of the time, however for some mkv-s there's been no image when transcoded. Casting the mkv directly to the chromecast gives you moving pictures, but it has no sound (since Chromecast does not support 5.1 audio as of yet as far as I understand).</p>
+<p>The first attempt at a solution was to then not reencode the video but to simply copy the original. That is simple using ffmpeg flag: -vcodec copy. Unfortunately this still doesn't work. However encoding the video to a file and then casting the file to the chromecast works. Thus there was something going on when the output from ffmpeg is streamed directly. I've still not worked out what is going on, but I've found a solution. Instead of creating a mp4 container, encoding everything into a mkv (or matroska) suddenly makes everything work just fine. The final line is</p>
+<p>[code]</p>
+<p>cat some-media-file | ffmpeg -i - -f matroska -vcodec h264 -acodec aac -ac2 pipe:1 | stream-to-chromecast</p>
+<p>[/code]</p>
+<p>So far this seems to work all the time, however it is somewhat unnecessary to encode h264 if the video is already h264. In my project I therefor check codecs and set the flags for ffmpeg accordingly.</p>
+<p>The project is written in Node.JS and is available on the <a href="https://github.com/rrostt/transcode-cast">following github repository</a>.</p>
