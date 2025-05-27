@@ -17,7 +17,7 @@ This engagement is not trivial. For a model to maintain coherence across a conve
 
 In this light, calling it merely _generative_ fails to account for its interpretive doing. These models work by continuously negotiating meaning in a co-constructed context with the user.
 
-### Why Terminology Matters*
+### Why Terminology Matters
 Terminology shapes understanding. When we call something _generative_, we focus on its outputs. When we call it _interpretive_, we shift focus to its relational, responsive, and situated behavior. This is not a minor semantic difference. It influences:
 
 - How we design interfaces
