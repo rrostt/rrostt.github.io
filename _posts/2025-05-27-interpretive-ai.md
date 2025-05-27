@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Beyond Generation - Why “Interpretive AI” Is a Better Name for LLMs"
+date: 2025-05-27
 ---
 The phrase _Generative AI_ (or _GenAI_) has rapidly become the go-to term for the class of machine learning systems capable of producing media: text, images, music, and video. It is catchy, easy to remember, and broadly descriptive. However, when applied to large language models (LLMs), the term does more harm than good.
 
