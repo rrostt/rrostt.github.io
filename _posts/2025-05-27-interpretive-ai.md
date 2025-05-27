@@ -30,5 +30,5 @@ The term Interpretive AI highlights that these systems do more than generate sta
 
 This shift in framing opens up a richer vocabulary for discussing how such systems behave, how they _misinterpret_, and how they mediate human communication.
 
-## Philosophical Considerations
+### Philosophical Considerations
 I propose this term intentionally provocatively. Interpretation traditionally implies human understanding, grounded in a condition of being-in-the-world. LLMs do not understand in this sense. But meaning and understanding are not located within the system. Instead, they emerge in relation, unfolding between human and model. In this view, interpretation is a co-operative, situated process, enacted through interaction. Through its ongoing token generation, the LLM opens up a space of possibilities, participating in a kind of relational meaning-making. _Interpretive AI_ is therefore not a claim about internal cognition, but about the model’s relational role in negotiating understanding as a dialogical partner.
