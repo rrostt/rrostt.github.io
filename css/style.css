@@ -16,6 +16,10 @@ textarea {
     vertical-align: baseline;
 }
 
+em {
+    font-style: italic;
+}
+
 strong {
     font-weight: bold;
 }
