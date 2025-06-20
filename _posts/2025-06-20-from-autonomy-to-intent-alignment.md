@@ -5,8 +5,6 @@ author: "Mattias Rost"
 description: "A subtle shift is happening in how we think about AI agents. Not as autonomous machines, but as collaborative systems that align with human intent through interaction."
 layout: post
 ---
-# From Autonomy to Intent Alignment
-
 I'm picking up on a shift in the narrative around AI agents. It’s subtle, but it’s there. For the past year or so, the dominant story has been about autonomy. Agents that act on our behalf, automate our workflows, and handle tasks end-to-end without our involvement. There’s been talk of 2025 as “the year of the agent”, a moment when AI systems would begin to replace human effort at scale. But what I see emerging instead is something quieter, and potentially more transformative: a move away from autonomy and toward human alignment. Not agents that replace us, but systems that collaborate with us. Not full delegation, but *intent alignment through interaction*.
 
 ## The Autonomy Narrative
