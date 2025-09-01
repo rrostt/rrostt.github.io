@@ -8,7 +8,8 @@ date: 2025-09-01
 It’s a fair question. If an LLM can give you the gist of Kant or Heidegger in plain language, what’s the point of wrestling with the originals? The same goes for other parts of life. Why sit through a long meeting if you can get an LLM summary? Why wander slowly through an exhibition when your headset can explain each piece as you pass by? Why listen to an entire lecture if your glasses can boil it down to three key take-aways?
 
 What begins with reading is quickly spreading elsewhere. More and more of our experiences are being mediated for us, reframed, summarized, or re-presented through an LLM.
-## **From Texts to Experiences**
+
+## From Texts to Experiences
 Think of three simple cases:
 
 - **Reading**: You could read the novel yourself, noticing the author’s style, rhythm, and ambiguities. Or you could let the LLM give you a tidy plot summary.
