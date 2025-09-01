@@ -2,7 +2,6 @@
 layout: post
 title: "Always-Ready-to-Be-Interpreted"
 date: 2025-09-01
-author: "Mattias Rost"
 ---
 “Why read a 400-page book”, a student once asked me, “when ChatGPT can explain it in a few seconds?”
 
