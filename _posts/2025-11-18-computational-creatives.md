@@ -111,7 +111,7 @@ Computation becomes a normal medium of thought.
 This does not diminish programming.
 It expands the space of what people can do with computers.
 
-## *A new paradigm: instructional and conversational computing*
+## A new paradigm: instructional and conversational computing
 
 When models can write code in response to natural-language instructions, the computer shifts from a static environment, defined in advance by applications, to a dynamic, emergent environment, defined *in the moment* by interaction.
 
