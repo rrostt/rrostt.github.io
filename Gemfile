@@ -32,11 +32,15 @@ gem "wdm", "~> 0.1.1", :platforms => [:mingw, :x64_mingw, :mswin]
 # do not have a Java counterpart.
 gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
 
-gem "jekyll-import", "~> 0.22.0"
-
-gem "hpricot", "~> 0.8.6"
-
-gem "open_uri_redirections", "~> 0.2.1"
-gem "safe_yaml", "~> 1.0"
+group :import do
+  gem "jekyll-import", "~> 0.22.0"
+  gem "hpricot", "~> 0.8.6"
+  gem "open_uri_redirections", "~> 0.2.1"
+  gem "safe_yaml", "~> 1.0"
+end
 
 gem "jekyll-paginate", "~> 1.1"
+
+# Ruby 3+ no longer ships WEBrick in the standard library, but Jekyll 3.x
+# uses it for `jekyll serve`.
+gem "webrick", "~> 1.8"
