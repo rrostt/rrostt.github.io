@@ -5,7 +5,7 @@ date: 2026-04-08
 author: Mattias Rost
 ---
 
-Next week I will present our paper **Co-Disclosing the Computer: LLM-Mediated Computing through Reflective Conversation** at CHI 2026 in Barcelona, one of the leading international conferences in human-computer interaction.
+Next week I will present my paper **Co-Disclosing the Computer: LLM-Mediated Computing through Reflective Conversation** at CHI 2026 in Barcelona, one of the leading international conferences in human-computer interaction.
 
 The paper explores what happens when computers are no longer primarily encountered as fixed applications with predefined interfaces, but as systems that can be shaped dynamically through interaction with large language models. We argue that this points toward a different way of understanding computing: not mainly as navigating ready-made software, but as entering into a reflective conversation where intentions are expressed, interpreted, reformulated, and made computationally actionable.
 
