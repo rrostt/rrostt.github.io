@@ -20,12 +20,13 @@
 
 title: Mattias Rost
 email: rrostt@gmail.com
-description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-domain: rrostt.github.io
-url: https://rrostt.github.io
+tagline: Associate Professor in Interaction Design
+description: >-
+  Mattias Rost is an Associate Professor in Interaction Design at the
+  University of Gothenburg, researching LLM-mediated computing, AI as a
+  material for interaction, and technology in everyday life.
+domain: rost.me
+url: https://rost.me
 baseurl: "" # the subpath of your site, e.g. /blog
 twitter_username: rrostt
 github_username:  rrostt
