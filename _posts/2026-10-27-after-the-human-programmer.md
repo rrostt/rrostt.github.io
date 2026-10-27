@@ -5,7 +5,7 @@ date: 2026-10-27
 author: Mattias Rost
 ---
 
-I’ve been waiting for this: the November–December issue of *ACM Interactions* is now online, with our cover story, [“After the Human Programmer”](https://interactions.acm.org/archive/view/november-december-2026/after-the-human-programmer?doi=10.1145%2F3841460).
+I’ve been waiting for this: the November–December issue of *ACM Interactions* is now online, with our cover story, [“After the Human Programmer”](https://interactions.acm.org/archive/view/november-december-2026/after-the-human-programmer?doi=10.1145%2F3841460), with Martin Jonsson and Jakob Tholander.
 
 When we wrote it, I think the argument might have seemed far-fetched to many readers. What was then a nascent trend now feels increasingly mainstream among professional programmers. I’m seeing more and more people stop reading code altogether.
 
